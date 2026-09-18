@@ -412,13 +412,7 @@
     padding-bottom: 1px;
   }
   .drawer__footer-credit:hover{ color: var(--clay); }
-  .drawer__footer-logo{
-    width: 14px;
-    height: 14px;
-    object-fit: contain;
-    border-radius: 3px;
-    vertical-align: middle;
-  }
+  
 </style>
 </head>
 <body>
@@ -428,7 +422,7 @@
 </video>
 
   <main class="stage">
-    <img class="logo" src="logox.png" alt="Lorsen Ventures" draggable="false">
+    <img class="logo" src="src/logox.png" alt="Lorsen Ventures" draggable="false">
     <p class="statement"><span class="accent">We</span><span class="rest"> muddy the water, to make it seem deep</span></p>
   </main>
 
@@ -480,41 +474,13 @@
 
       <p class="drawer__footer">
         © 2026 Lorsen Ventures. All rights reserved. Website created by
-        <a class="drawer__footer-credit" href="https://zulkaif.com" target="_blank" rel="noopener">
-          <img src="src/zulkaif.png" alt="Zulkaif" class="drawer__footer-logo">
-          <span>zulkaif.com</span>
+        <a class="drawer__footer-credit" href="https://zulkaif.com" target="_blank" rel="noopener">          
         </a>
       </p>
     </div>
   </section>
 
-  <script>
-    // Keep the logo invisible until it has actually finished loading,
-    // so there's no flash of a broken image or empty box.
-    (function(){
-      var img = document.querySelector('.logo');
-      function reveal(){ img.classList.add('is-loaded'); }
-      if (img.complete && img.naturalWidth > 0) {
-        reveal();
-      } else {
-        img.addEventListener('load', reveal);
-        img.addEventListener('error', function(){
-          // If the image fails to load, don't leave a permanently
-          // invisible placeholder taking up space.
-          img.style.display = 'none';
-        });
-      }
-    })();
-
-    // If the footer credit logo can't be found, drop the image rather
-    // than showing a broken-image icon next to the link text.
-    (function(){
-      var footerLogo = document.querySelector('.drawer__footer-logo');
-      if (!footerLogo) return;
-      footerLogo.addEventListener('error', function(){
-        footerLogo.style.display = 'none';
-      });
-    })();
+ 
 
     // Slide-up login drawer: tap the tab, drag it up, or drag the
     // handle back down to dismiss.
