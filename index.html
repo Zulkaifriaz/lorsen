@@ -110,43 +110,64 @@
   }
 
   /* ---------------------------------------------------------------
-     Slide-up contact drawer
+     Slide-up login drawer
   --------------------------------------------------------------- */
   .drawer-tab{
     position: fixed;
     left: 50%;
-    bottom: 0;
+    bottom: 1.4rem;
     transform: translateX(-50%);
     z-index: 40;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.85rem 1.6rem 0.7rem;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-bottom: none;
-    border-radius: 14px 14px 0 0;
-    font-family: var(--font-brand);
-    font-size: 0.92rem;
-    letter-spacing: 0.04em;
+    justify-content: center;
+    width: 3.1rem;
+    height: 3.1rem;
+    background: rgba(255,255,255,0.55);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.55);
+    border-radius: 50%;
     color: var(--slate);
     cursor: pointer;
     touch-action: none;
-    box-shadow: 0 -6px 18px rgba(69,65,58,0.08);
+    box-shadow: 0 8px 24px rgba(69,65,58,0.14);
+    animation: caret-invite 2.6s ease-in-out infinite;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  }
+  .drawer-tab:hover{
+    border-color: var(--clay);
+    box-shadow: 0 10px 28px rgba(69,65,58,0.2);
+  }
+  .drawer-tab:focus-visible{
+    outline: 2px solid var(--clay);
+    outline-offset: 3px;
+  }
+  .drawer-tab[aria-expanded="true"]{
+    animation: none;
   }
   .drawer-tab__chevron svg{
-    width: 14px; height: 14px;
+    width: 16px; height: 16px;
     display: block;
-    transition: transform 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
   }
   .drawer-tab[aria-expanded="true"] .drawer-tab__chevron svg{
     transform: rotate(180deg);
+  }
+  @keyframes caret-invite{
+    0%, 100%{ transform: translateX(-50%) translateY(0); }
+    50%{ transform: translateX(-50%) translateY(-6px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .drawer-tab{ animation: none; }
   }
 
   .drawer-overlay{
     position: fixed;
     inset: 0;
-    background: rgba(69,65,58,0.28);
+    background: rgba(69,65,58,0.22);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.35s ease;
@@ -161,9 +182,11 @@
     position: fixed;
     left: 0; right: 0; bottom: 0;
     width: 100%;
-    max-height: min(640px, 86vh);
-    background: #fff;
-    border-top: 1px solid var(--line);
+    max-height: min(560px, 86vh);
+    background: rgba(255,255,255,0.62);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.6);
     border-radius: 22px 22px 0 0;
     box-shadow: 0 -18px 50px rgba(69,65,58,0.18);
     transform: translateY(100%);
@@ -175,6 +198,11 @@
   }
   .drawer.is-open{ transform: translateY(0); }
   .drawer.is-dragging{ transition: none; }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+    .drawer{ background: #fdfcfa; }
+    .drawer-tab{ background: #fdfcfa; }
+  }
 
   .drawer__handle{
     width: 42px; height: 5px;
@@ -218,11 +246,11 @@
     max-width: 30rem;
   }
 
-  .contact-form{
+  .login-form{
     display: flex;
     flex-direction: column;
     gap: 1.15rem;
-    max-width: 30rem;
+    max-width: 24rem;
     margin: 0 auto;
   }
   .field{
@@ -238,7 +266,13 @@
     color: var(--slate);
     opacity: 0.6;
   }
+  .field__input-wrap{
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
   .field__input{
+    width: 100%;
     font-family: var(--font-ui);
     font-size: 1rem;
     color: var(--slate);
@@ -249,38 +283,75 @@
     outline: none;
     resize: none;
   }
-  .field__input:focus{ border-bottom-color: var(--clay); }
-  .field__input--area{ min-height: 4.2rem; }
-
-  .form-error{
-    color: var(--clay);
-    font-family: var(--font-ui);
-    font-size: 0.85rem;
-    margin: -0.3rem 0 0;
-    display: none;
+  .field__input[type="password"]{
+    padding-right: 2rem;
+    /* Fall back gracefully in browsers without a native reveal control. */
+    letter-spacing: 0.02em;
   }
-  .form-error.is-visible{ display: block; }
-
-  .recaptcha-disclosure{
-    font-family: var(--font-ui);
-    font-size: 0.74rem;
-    line-height: 1.5;
+  .field__input::-ms-reveal,
+  .field__input::-ms-clear{ display: none; }
+  .field__input:focus{ border-bottom-color: var(--clay); }
+  .field__input.is-invalid{ border-bottom-color: var(--clay); }
+  .field__toggle{
+    position: absolute;
+    right: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: none;
+    background: transparent;
     color: var(--slate);
     opacity: 0.55;
-    text-align: center;
-    margin: -0.2rem auto 0;
-    max-width: 28rem;
+    cursor: pointer;
+    padding: 0;
   }
-  .recaptcha-disclosure a{
-    color: inherit;
-    text-decoration: underline;
+  .field__toggle:hover{ opacity: 0.9; }
+  .field__toggle svg{ width: 17px; height: 17px; display: block; }
+  .field__toggle .icon-eye-off{ display: none; }
+  .field__toggle[aria-pressed="true"] .icon-eye{ display: none; }
+  .field__toggle[aria-pressed="true"] .icon-eye-off{ display: block; }
+  .field__hint{
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--clay);
+    min-height: 1.1em;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
-
-  /* The official reCAPTCHA v3 badge is hidden per Google's guidance,
-     provided the disclosure text above is shown instead. */
-  .grecaptcha-badge{ visibility: hidden; }
+  .field__hint.is-visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .form-error{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: var(--clay);
+    font-family: var(--font-ui);
+    font-size: 0.86rem;
+    line-height: 1.4;
+    background: rgba(124,42,28,0.08);
+    border: 1px solid rgba(124,42,28,0.18);
+    border-radius: 8px;
+    padding: 0.7rem 0.85rem;
+    margin: -0.2rem 0 0;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.25s ease, padding 0.25s ease, margin 0.25s ease;
+  }
+  .form-error.is-visible{
+    opacity: 1;
+    max-height: 6rem;
+  }
+  .form-error svg{ flex-shrink: 0; width: 15px; height: 15px; margin-top: 0.1rem; }
 
   .submit-btn{
+    position: relative;
     margin-top: 0.3rem;
     font-family: var(--font-brand);
     font-size: 1rem;
@@ -294,81 +365,38 @@
     transition: background 0.25s ease, opacity 0.25s ease;
   }
   .submit-btn:disabled{
-    opacity: 0.35;
-    cursor: not-allowed;
+    opacity: 0.6;
+    cursor: default;
   }
   .submit-btn:not(:disabled):hover{ background: var(--clay); }
-
-  /* ---------------------------------------------------------------
-     Success toast — slides down from the top of the viewport once
-     the message has actually sent, with a manual dismiss control.
-  --------------------------------------------------------------- */
-  .success-toast{
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(-120%);
-    z-index: 60;
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    max-width: min(30rem, calc(100vw - 2rem));
-    margin-top: 1rem;
-    padding: 0.95rem 1rem 0.95rem 1.3rem;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(69,65,58,0.16);
-    font-family: var(--font-brand);
-    font-size: 0.98rem;
-    line-height: 1.4;
-    color: var(--slate);
-    transition: transform 0.45s cubic-bezier(0.32,0.72,0,1);
-  }
-  .success-toast.is-visible{
-    transform: translateX(-50%) translateY(0);
-  }
-  .success-toast .accent{ color: var(--clay); }
-  .success-toast p{ margin: 0; }
-  .success-toast__close{
-    flex-shrink: 0;
-    width: 26px; height: 26px;
-    border: none;
-    background: transparent;
-    color: var(--slate);
-    opacity: 0.55;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .submit-btn__spinner{
+    display: inline-block;
+    width: 14px; height: 14px;
+    margin-right: 0.5rem;
     border-radius: 50%;
-    transition: opacity 0.2s ease, background 0.2s ease;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    vertical-align: -2px;
+    animation: spin 0.7s linear infinite;
   }
-  .success-toast__close:hover{
-    opacity: 1;
-    background: rgba(69,65,58,0.07);
-  }
-  .success-toast__close svg{ width: 14px; height: 14px; }
+  .submit-btn:not(.is-loading) .submit-btn__spinner{ display: none; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
 
   @media (prefers-reduced-motion: reduce){
-    .success-toast{ transition: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce){
+    .submit-btn__spinner{ animation-duration: 1.4s; }
     .drawer{ transition: none; }
     .drawer-overlay{ transition: none; }
   }
 
   @media (max-width: 420px){
     .drawer__inner{ padding: 0.4rem 1.4rem 2rem; }
-    .drawer-tab{ padding: 0.75rem 1.3rem 0.6rem; font-size: 0.86rem; }
   }
 </style>
 </head>
 <body>
 
   <video class="video-bg" autoplay muted loop playsinline>
-    <source src="waves.mp4" type="video/mp4" aria-hidden="true">
+    <source src="src/waves.mp4" type="video/mp4" aria-hidden="true">
 </video>
 
   <main class="stage">
@@ -376,58 +404,53 @@
     <p class="statement"><span class="accent">We</span><span class="rest"> muddy the water, to make it seem deep</span></p>
   </main>
 
-  <button class="drawer-tab" id="drawerTab" type="button" aria-expanded="false" aria-controls="contactDrawer">
+  <button class="drawer-tab" id="drawerTab" type="button" aria-expanded="false" aria-controls="loginDrawer" aria-label="Log in">
     <span class="drawer-tab__chevron" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
     </span>
-    <span class="drawer-tab__label">Contact us</span>
   </button>
 
   <div class="drawer-overlay" id="drawerOverlay" hidden></div>
 
-  <section class="drawer" id="contactDrawer" aria-hidden="true" aria-label="Contact us">
+  <section class="drawer" id="loginDrawer" aria-hidden="true" aria-label="Log in">
     <div class="drawer__handle" id="drawerHandle" aria-hidden="true"></div>
-    <button class="drawer__close" id="drawerClose" type="button" aria-label="Close contact form">
+    <button class="drawer__close" id="drawerClose" type="button" aria-label="Close login form">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
     </button>
 
     <div class="drawer__inner">
-      <h2 class="drawer__heading"><span class="accent">Get</span> in touch</h2>
-      <p class="drawer__sub">Tell us a little about what you're building. We read every message ourselves.</p>
+      <h2 class="drawer__heading"><span class="accent">Log</span> in</h2>
+      <p class="drawer__sub">Sign in with your account email and password.</p>
 
-      <form class="contact-form" id="contactForm" novalidate>
-        <label class="field">
-          <span class="field__label">Name</span>
-          <input class="field__input" type="text" name="name" autocomplete="name" required>
-        </label>
+      <form class="login-form" id="loginForm" novalidate>
         <label class="field">
           <span class="field__label">Email</span>
-          <input class="field__input" type="email" name="email" autocomplete="email" required>
+          <input class="field__input" id="emailInput" type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-describedby="emailHint" required>
+          <p class="field__hint" id="emailHint" role="alert"></p>
         </label>
         <label class="field">
-          <span class="field__label">Message</span>
-          <textarea class="field__input field__input--area" name="message" rows="3" required></textarea>
+          <span class="field__label">Password</span>
+          <span class="field__input-wrap">
+            <input class="field__input" id="passwordInput" type="password" name="password" autocomplete="current-password" required>
+            <button class="field__toggle" id="passwordToggle" type="button" aria-pressed="false" aria-label="Show password" aria-controls="passwordInput">
+              <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"></path><circle cx="12" cy="12" r="3"></circle><line x1="2" y1="22" x2="22" y2="2"></line></svg>
+            </button>
+          </span>
         </label>
 
-        <p class="recaptcha-disclosure">
-          This site is protected by reCAPTCHA and the Google
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
-          <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+        <p class="form-error" id="formError" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span id="formErrorText"></span>
         </p>
 
-        <p class="form-error" id="formError" role="alert"></p>
-
-        <button type="submit" class="submit-btn" id="submitBtn" disabled>Send message</button>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="submit-btn__spinner" aria-hidden="true"></span>
+          <span class="submit-btn__label">Log in</span>
+        </button>
       </form>
     </div>
   </section>
-
-  <div class="success-toast" id="successToast" role="status" aria-live="polite" hidden>
-    <p><span class="accent">Thanks</span> for your message. We'll write back soon.</p>
-    <button class="success-toast__close" id="successToastClose" type="button" aria-label="Dismiss">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
-    </button>
-  </div>
 
   <script>
     // Keep the logo invisible until it has actually finished loading,
@@ -447,38 +470,24 @@
       }
     })();
 
-    // Slide-up contact drawer: tap the tab, drag it up, or drag the
+    // Slide-up login drawer: tap the tab, drag it up, or drag the
     // handle back down to dismiss.
     (function(){
       var tab = document.getElementById('drawerTab');
-      var drawer = document.getElementById('contactDrawer');
+      var drawer = document.getElementById('loginDrawer');
       var overlay = document.getElementById('drawerOverlay');
       var closeBtn = document.getElementById('drawerClose');
       var handle = document.getElementById('drawerHandle');
-      var form = document.getElementById('contactForm');
+      var form = document.getElementById('loginForm');
       var submitBtn = document.getElementById('submitBtn');
       var formError = document.getElementById('formError');
-      var toast = document.getElementById('successToast');
-      var toastClose = document.getElementById('successToastClose');
-      var toastTimer = null;
-
-      function showSuccessToast(){
-        toast.hidden = false;
-        requestAnimationFrame(function(){ toast.classList.add('is-visible'); });
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(hideSuccessToast, 8000);
-      }
-
-      function hideSuccessToast(){
-        clearTimeout(toastTimer);
-        toast.classList.remove('is-visible');
-        setTimeout(function(){ toast.hidden = true; }, 450);
-      }
-
-      toastClose.addEventListener('click', hideSuccessToast);
+      var formErrorText = document.getElementById('formErrorText');
+      var emailInput = document.getElementById('emailInput');
+      var emailHint = document.getElementById('emailHint');
+      var passwordInput = document.getElementById('passwordInput');
+      var passwordToggle = document.getElementById('passwordToggle');
 
       var isOpen = false;
-      var RECAPTCHA_SITE_KEY = '6LfNLTktAAAAAIUtmjmZdXyijsjSrrYdtr7x5gcJ';
 
       function openDrawer(){
         isOpen = true;
@@ -505,6 +514,7 @@
         setTimeout(function(){ if (!isOpen) overlay.hidden = true; }, 350);
         document.body.style.overflow = '';
         tab.focus({ preventScroll: true });
+        setTimeout(resetLoginForm, 350);
       }
 
       function toggleDrawer(){ isOpen ? closeDrawer() : openDrawer(); }
@@ -570,100 +580,101 @@
       window.addEventListener('pointercancel', onDragEnd);
 
       function showFormError(message){
-        formError.textContent = message;
+        formErrorText.textContent = message;
         formError.classList.add('is-visible');
       }
 
       function clearFormError(){
-        formError.textContent = '';
+        formErrorText.textContent = '';
         formError.classList.remove('is-visible');
       }
 
-      // reCAPTCHA v3 loads asynchronously and can fail outright (ad
-      // blockers, privacy extensions, network restrictions, etc).
-      // Track its availability so submission can fall back gracefully
-      // instead of leaving the button permanently disabled with no
-      // explanation.
-      var recaptchaReady = false;
-      var recaptchaFailed = false;
+      function showEmailHint(message){
+        emailHint.textContent = message;
+        emailHint.classList.add('is-visible');
+        emailInput.classList.add('is-invalid');
+        emailInput.setAttribute('aria-invalid', 'true');
+      }
 
-      function markRecaptchaReady(){
-        recaptchaReady = true;
+      function clearEmailHint(){
+        emailHint.textContent = '';
+        emailHint.classList.remove('is-visible');
+        emailInput.classList.remove('is-invalid');
+        emailInput.removeAttribute('aria-invalid');
+      }
+
+      // Requires an @, a domain, and a dot-extension after it (e.g. .com) —
+      // catches the common typos (missing @, missing dot, trailing dot)
+      // without trying to be a full RFC 5322 validator.
+      var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+      function validateEmail(showError){
+        var value = emailInput.value.trim();
+        if (!value) {
+          if (showError) showEmailHint('Enter your email address.');
+          return false;
+        }
+        if (!EMAIL_PATTERN.test(value)) {
+          if (showError) showEmailHint('Enter a valid email, like name@example.com.');
+          return false;
+        }
+        clearEmailHint();
+        return true;
+      }
+
+      emailInput.addEventListener('input', function(){
+        if (emailHint.classList.contains('is-visible')) validateEmail(true);
+        clearFormError();
+      });
+      emailInput.addEventListener('blur', function(){ validateEmail(true); });
+      passwordInput.addEventListener('input', clearFormError);
+
+      // Reveal/hide the password without changing the field's default
+      // masked state.
+      passwordToggle.addEventListener('click', function(){
+        var revealed = passwordInput.type === 'text';
+        passwordInput.type = revealed ? 'password' : 'text';
+        passwordToggle.setAttribute('aria-pressed', String(!revealed));
+        passwordToggle.setAttribute('aria-label', revealed ? 'Show password' : 'Hide password');
+        passwordInput.focus({ preventScroll: true });
+      });
+
+      function resetLoginForm(){
+        form.reset();
+        clearEmailHint();
+        clearFormError();
+        passwordInput.type = 'password';
+        passwordToggle.setAttribute('aria-pressed', 'false');
+        passwordToggle.setAttribute('aria-label', 'Show password');
+        submitBtn.classList.remove('is-loading');
         submitBtn.disabled = false;
       }
 
-      function markRecaptchaFailed(){
-        recaptchaFailed = true;
-        // Still let people submit — better to accept a message without
-        // spam protection than to silently block real visitors.
-        submitBtn.disabled = false;
-      }
-
-      // Poll briefly for the grecaptcha global, since the script tag
-      // loads async/defer and may not be ready yet on page load.
-      (function waitForRecaptcha(attemptsLeft){
-        if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(markRecaptchaReady);
-          return;
-        }
-        if (attemptsLeft <= 0) {
-          markRecaptchaFailed();
-          return;
-        }
-        setTimeout(function(){ waitForRecaptcha(attemptsLeft - 1); }, 300);
-      })(20); // ~6 seconds before giving up
-
-      // Form submit — sends to submit.php
       form.addEventListener('submit', function(e){
         e.preventDefault();
         if (submitBtn.disabled) return;
 
         clearFormError();
+        var emailOk = validateEmail(true);
+        if (!emailOk) {
+          emailInput.focus();
+          return;
+        }
+        if (!passwordInput.value) {
+          passwordInput.focus();
+          return;
+        }
+
+        // Account lookup isn't wired up yet, so every attempt currently
+        // resolves the same way once the email format checks out.
         submitBtn.disabled = true;
-
-        function sendForm(token){
-          var formData = new FormData(form);
-          if (token) formData.append('g-recaptcha-response', token);
-
-          fetch('submit.php', {
-            method: 'POST',
-            body: formData
-          })
-          .then(function(response){ return response.json(); })
-          .then(function(data){
-            if (data.success) {
-              form.reset();
-              submitBtn.disabled = false;
-              closeDrawer();
-              showSuccessToast();
-            } else {
-              showFormError(data.message || 'Something went wrong sending your message. Please try again.');
-              submitBtn.disabled = false;
-            }
-          })
-          .catch(function(error){
-            console.error('Error:', error);
-            showFormError('Something went wrong sending your message. Please try again.');
-            submitBtn.disabled = false;
-          });
-        }
-
-        if (recaptchaReady && window.grecaptcha) {
-          grecaptcha.ready(function(){
-            grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'})
-              .then(sendForm)
-              .catch(function(error){
-                console.error('reCAPTCHA error:', error);
-                // Fall back to submitting without a token rather than
-                // blocking the user entirely.
-                sendForm(null);
-              });
-          });
-        } else {
-          // reCAPTCHA never loaded — submit anyway so a blocked
-          // script doesn't cost a real lead.
-          sendForm(null);
-        }
+        submitBtn.classList.add('is-loading');
+        setTimeout(function(){
+          submitBtn.classList.remove('is-loading');
+          submitBtn.disabled = false;
+          showFormError('No account found for that email address.');
+          passwordInput.value = '';
+        }, 600);
       });
     })();
   </script>
