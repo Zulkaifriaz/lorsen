@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorsen Ventures</title>
+<meta name="description" content="Lorsen Ventures">
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+  /* ---------------------------------------------------------------
+     Sanomat is the brand's licensed typeface. If you own the font
+     files, drop them next to this file and uncomment the block
+     below — everything else already points at the family name.
+  --------------------------------------------------------------- */
+  /*
+  @font-face {
+    font-family: 'Sanomat';
+    src: url('Sanomat-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Sanomat';
+    src: url('Sanomat-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+  }
+  */
+  :root{
+    --slate: #45413A;
+    --clay:  #7C2A1C;
+    --ochre: #9C5A3C;
+    --line:  rgba(69,65,58,0.18);
+    --font-brand: 'Sanomat', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  html, body{
+    height: 100%;
+  }
+  body{
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-brand);
+    color: var(--slate);
+    background: #ffffff;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ---------------------------------------------------------------
+     Background — waves.gif, sitting at 35% opacity (i.e. ~65%
+     transparent) behind the page content. Drop waves.gif next to
+     this file.
+  --------------------------------------------------------------- */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Shows the entire video */
+    object-position: center;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
+    background: #ffffff; /* Optional: fills empty space */
+}
+  
+
+
+  .stage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 6vh 8vw 9vh;
+    max-width: 38rem;
+  }
+  .logo{
+    width: clamp(150px, 24vw, 230px);
+    height: auto;
+    margin-bottom: clamp(2rem, 6vh, 3.75rem);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .logo.is-loaded{
+    opacity: 1;
+  }
+  .statement{
+    margin: 0;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 1rem + 2.1vw, 2.35rem);
+    line-height: 1.42;
+    letter-spacing: 0.002em;
+    user-select: none;
+  }
+  .statement .accent{
+    color: var(--clay);
+  }
+  .statement .rest{
+    color: var(--slate);
+  }
+  @media (max-width: 420px){
+    .logo{ margin-bottom: 2rem; }
+  }
+
+  /* ---------------------------------------------------------------
+     Slide-up contact drawer
+  --------------------------------------------------------------- */
+  .drawer-tab{
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.6rem 0.7rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 14px 14px 0 0;
+    font-family: var(--font-brand);
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    color: var(--slate);
+    cursor: pointer;
+    touch-action: none;
+    box-shadow: 0 -6px 18px rgba(69,65,58,0.08);
+  }
+  .drawer-tab__chevron svg{
+    width: 14px; height: 14px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .drawer-tab[aria-expanded="true"] .drawer-tab__chevron svg{
+    transform: rotate(180deg);
+  }
+
+  .drawer-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(69,65,58,0.28);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease;
+    z-index: 35;
+  }
+  .drawer-overlay.is-visible{
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .drawer{
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    width: 100%;
+    max-height: min(640px, 86vh);
+    background: #fff;
+    border-top: 1px solid var(--line);
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -18px 50px rgba(69,65,58,0.18);
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.32,0.72,0,1);
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    touch-action: none;
+  }
+  .drawer.is-open{ transform: translateY(0); }
+  .drawer.is-dragging{ transition: none; }
+
+  .drawer__handle{
+    width: 42px; height: 5px;
+    border-radius: 3px;
+    background: var(--line);
+    margin: 0.75rem auto 0;
+    cursor: grab;
+    touch-action: none;
+  }
+  .drawer__close{
+    position: absolute;
+    top: 0.6rem; right: 0.7rem;
+    width: 32px; height: 32px;
+    border: none; background: transparent;
+    color: var(--slate);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .drawer__close svg{ width: 16px; height: 16px; }
+
+  .drawer__inner{
+    padding: 0.4rem 2rem 2.2rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drawer__heading{
+    font-family: var(--font-brand);
+    font-weight: 400;
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 1.9rem);
+    margin: 0.6rem 0 0.4rem;
+    text-align: center;
+  }
+  .drawer__heading .accent{ color: var(--clay); }
+  .drawer__sub{
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--slate);
+    opacity: 0.7;
+    text-align: center;
+    margin: 0 auto 1.7rem;
+    max-width: 30rem;
+  }
+
+  .contact-form{
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  .field{
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-family: var(--font-ui);
+  }
+  .field__label{
+    font-size: 0.76rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--slate);
+    opacity: 0.6;
+  }
+  .field__input{
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--slate);
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    padding: 0.45rem 0.1rem;
+    outline: none;
+    resize: none;
+  }
+  .field__input:focus{ border-bottom-color: var(--clay); }
+  .field__input--area{ min-height: 4.2rem; }
+
+  .form-error{
+    color: var(--clay);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    margin: -0.3rem 0 0;
+    display: none;
+  }
+  .form-error.is-visible{ display: block; }
+
+  .recaptcha-disclosure{
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    line-height: 1.5;
+    color: var(--slate);
+    opacity: 0.55;
+    text-align: center;
+    margin: -0.2rem auto 0;
+    max-width: 28rem;
+  }
+  .recaptcha-disclosure a{
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* The official reCAPTCHA v3 badge is hidden per Google's guidance,
+     provided the disclosure text above is shown instead. */
+  .grecaptcha-badge{ visibility: hidden; }
+
+  .submit-btn{
+    margin-top: 0.3rem;
+    font-family: var(--font-brand);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: var(--slate);
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.25s ease, opacity 0.25s ease;
+  }
+  .submit-btn:disabled{
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .submit-btn:not(:disabled):hover{ background: var(--clay); }
+
+  /* ---------------------------------------------------------------
+     Success toast — slides down from the top of the viewport once
+     the message has actually sent, with a manual dismiss control.
+  --------------------------------------------------------------- */
+  .success-toast{
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: min(30rem, calc(100vw - 2rem));
+    margin-top: 1rem;
+    padding: 0.95rem 1rem 0.95rem 1.3rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(69,65,58,0.16);
+    font-family: var(--font-brand);
+    font-size: 0.98rem;
+    line-height: 1.4;
+    color: var(--slate);
+    transition: transform 0.45s cubic-bezier(0.32,0.72,0,1);
+  }
+  .success-toast.is-visible{
+    transform: translateX(-50%) translateY(0);
+  }
+  .success-toast .accent{ color: var(--clay); }
+  .success-toast p{ margin: 0; }
+  .success-toast__close{
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border: none;
+    background: transparent;
+    color: var(--slate);
+    opacity: 0.55;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: opacity 0.2s ease, background 0.2s ease;
+  }
+  .success-toast__close:hover{
+    opacity: 1;
+    background: rgba(69,65,58,0.07);
+  }
+  .success-toast__close svg{ width: 14px; height: 14px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .success-toast{ transition: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .drawer{ transition: none; }
+    .drawer-overlay{ transition: none; }
+  }
+
+  @media (max-width: 420px){
+    .drawer__inner{ padding: 0.4rem 1.4rem 2rem; }
+    .drawer-tab{ padding: 0.75rem 1.3rem 0.6rem; font-size: 0.86rem; }
+  }
+</style>
+</head>
+<body>
+
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="waves.mp4" type="video/mp4" aria-hidden="true">
+</video>
+
+  <main class="stage">
+    <img class="logo" src="logox.png" alt="Lorsen Ventures" draggable="false">
+    <p class="statement"><span class="accent">We</span><span class="rest"> muddy the water, to make it seem deep</span></p>
+  </main>
+
+  <button class="drawer-tab" id="drawerTab" type="button" aria-expanded="false" aria-controls="contactDrawer">
+    <span class="drawer-tab__chevron" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </span>
+    <span class="drawer-tab__label">Contact us</span>
+  </button>
+
+  <div class="drawer-overlay" id="drawerOverlay" hidden></div>
+
+  <section class="drawer" id="contactDrawer" aria-hidden="true" aria-label="Contact us">
+    <div class="drawer__handle" id="drawerHandle" aria-hidden="true"></div>
+    <button class="drawer__close" id="drawerClose" type="button" aria-label="Close contact form">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+    </button>
+
+    <div class="drawer__inner">
+      <h2 class="drawer__heading"><span class="accent">Get</span> in touch</h2>
+      <p class="drawer__sub">Tell us a little about what you're building. We read every message ourselves.</p>
+
+      <form class="contact-form" id="contactForm" novalidate>
+        <label class="field">
+          <span class="field__label">Name</span>
+          <input class="field__input" type="text" name="name" autocomplete="name" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input class="field__input" type="email" name="email" autocomplete="email" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Message</span>
+          <textarea class="field__input field__input--area" name="message" rows="3" required></textarea>
+        </label>
+
+        <p class="recaptcha-disclosure">
+          This site is protected by reCAPTCHA and the Google
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+          <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+        </p>
+
+        <p class="form-error" id="formError" role="alert"></p>
+
+        <button type="submit" class="submit-btn" id="submitBtn" disabled>Send message</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="success-toast" id="successToast" role="status" aria-live="polite" hidden>
+    <p><span class="accent">Thanks</span> for your message. We'll write back soon.</p>
+    <button class="success-toast__close" id="successToastClose" type="button" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+    </button>
+  </div>
+
+  <script>
+    // Keep the logo invisible until it has actually finished loading,
+    // so there's no flash of a broken image or empty box.
+    (function(){
+      var img = document.querySelector('.logo');
+      function reveal(){ img.classList.add('is-loaded'); }
+      if (img.complete && img.naturalWidth > 0) {
+        reveal();
+      } else {
+        img.addEventListener('load', reveal);
+        img.addEventListener('error', function(){
+          // If the image fails to load, don't leave a permanently
+          // invisible placeholder taking up space.
+          img.style.display = 'none';
+        });
+      }
+    })();
+
+    // Slide-up contact drawer: tap the tab, drag it up, or drag the
+    // handle back down to dismiss.
+    (function(){
+      var tab = document.getElementById('drawerTab');
+      var drawer = document.getElementById('contactDrawer');
+      var overlay = document.getElementById('drawerOverlay');
+      var closeBtn = document.getElementById('drawerClose');
+      var handle = document.getElementById('drawerHandle');
+      var form = document.getElementById('contactForm');
+      var submitBtn = document.getElementById('submitBtn');
+      var formError = document.getElementById('formError');
+      var toast = document.getElementById('successToast');
+      var toastClose = document.getElementById('successToastClose');
+      var toastTimer = null;
+
+      function showSuccessToast(){
+        toast.hidden = false;
+        requestAnimationFrame(function(){ toast.classList.add('is-visible'); });
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(hideSuccessToast, 8000);
+      }
+
+      function hideSuccessToast(){
+        clearTimeout(toastTimer);
+        toast.classList.remove('is-visible');
+        setTimeout(function(){ toast.hidden = true; }, 450);
+      }
+
+      toastClose.addEventListener('click', hideSuccessToast);
+
+      var isOpen = false;
+      var RECAPTCHA_SITE_KEY = '6LfNLTktAAAAAIUtmjmZdXyijsjSrrYdtr7x5gcJ';
+
+      function openDrawer(){
+        isOpen = true;
+        drawer.style.transform = '';
+        drawer.classList.add('is-open');
+        drawer.setAttribute('aria-hidden', 'false');
+        tab.setAttribute('aria-expanded', 'true');
+        overlay.hidden = false;
+        overlay.style.opacity = '';
+        requestAnimationFrame(function(){ overlay.classList.add('is-visible'); });
+        document.body.style.overflow = 'hidden';
+        var firstField = form.querySelector('input, textarea');
+        if (firstField) firstField.focus({ preventScroll: true });
+      }
+
+      function closeDrawer(){
+        isOpen = false;
+        drawer.style.transform = '';
+        drawer.classList.remove('is-open');
+        drawer.setAttribute('aria-hidden', 'true');
+        tab.setAttribute('aria-expanded', 'false');
+        overlay.classList.remove('is-visible');
+        overlay.style.opacity = '';
+        setTimeout(function(){ if (!isOpen) overlay.hidden = true; }, 350);
+        document.body.style.overflow = '';
+        tab.focus({ preventScroll: true });
+      }
+
+      function toggleDrawer(){ isOpen ? closeDrawer() : openDrawer(); }
+
+      overlay.addEventListener('click', closeDrawer);
+      closeBtn.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && isOpen) closeDrawer();
+      });
+
+      // Unified drag + tap handling for the tab and the handle.
+      var dragging = false, startY = 0, startTranslate = 0, drawerHeight = 0, moved = 0;
+
+      function getTranslateY(el){
+        var t = window.getComputedStyle(el).transform;
+        if (t === 'none') return 0;
+        var m = t.match(/matrix\(([^)]+)\)/);
+        if (!m) return 0;
+        var parts = m[1].split(',').map(parseFloat);
+        return parts[5] || 0;
+      }
+
+      function onDragStart(e){
+        dragging = true;
+        moved = 0;
+        startY = (e.touches ? e.touches[0].clientY : e.clientY);
+        drawerHeight = drawer.offsetHeight || 480;
+        startTranslate = isOpen ? 0 : drawerHeight;
+        drawer.classList.add('is-dragging');
+        overlay.hidden = false;
+      }
+
+      function onDragMove(e){
+        if (!dragging) return;
+        var y = (e.touches ? e.touches[0].clientY : e.clientY);
+        var delta = y - startY;
+        moved = Math.abs(delta);
+        var next = Math.min(drawerHeight, Math.max(0, startTranslate + delta));
+        drawer.style.transform = 'translateY(' + next + 'px)';
+        overlay.style.opacity = String(1 - next / drawerHeight);
+        overlay.classList.add('is-visible');
+      }
+
+      function onDragEnd(){
+        if (!dragging) return;
+        dragging = false;
+        drawer.classList.remove('is-dragging');
+        if (moved < 6) {
+          // Treat this as a tap rather than a drag.
+          drawer.style.transform = '';
+          toggleDrawer();
+          return;
+        }
+        var current = getTranslateY(drawer);
+        if (current < drawerHeight * 0.5) openDrawer(); else closeDrawer();
+      }
+
+      [tab, handle].forEach(function(el){
+        el.addEventListener('pointerdown', onDragStart);
+      });
+      window.addEventListener('pointermove', onDragMove);
+      window.addEventListener('pointerup', onDragEnd);
+      window.addEventListener('pointercancel', onDragEnd);
+
+      function showFormError(message){
+        formError.textContent = message;
+        formError.classList.add('is-visible');
+      }
+
+      function clearFormError(){
+        formError.textContent = '';
+        formError.classList.remove('is-visible');
+      }
+
+      // reCAPTCHA v3 loads asynchronously and can fail outright (ad
+      // blockers, privacy extensions, network restrictions, etc).
+      // Track its availability so submission can fall back gracefully
+      // instead of leaving the button permanently disabled with no
+      // explanation.
+      var recaptchaReady = false;
+      var recaptchaFailed = false;
+
+      function markRecaptchaReady(){
+        recaptchaReady = true;
+        submitBtn.disabled = false;
+      }
+
+      function markRecaptchaFailed(){
+        recaptchaFailed = true;
+        // Still let people submit — better to accept a message without
+        // spam protection than to silently block real visitors.
+        submitBtn.disabled = false;
+      }
+
+      // Poll briefly for the grecaptcha global, since the script tag
+      // loads async/defer and may not be ready yet on page load.
+      (function waitForRecaptcha(attemptsLeft){
+        if (window.grecaptcha && window.grecaptcha.ready) {
+          window.grecaptcha.ready(markRecaptchaReady);
+          return;
+        }
+        if (attemptsLeft <= 0) {
+          markRecaptchaFailed();
+          return;
+        }
+        setTimeout(function(){ waitForRecaptcha(attemptsLeft - 1); }, 300);
+      })(20); // ~6 seconds before giving up
+
+      // Form submit — sends to submit.php
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (submitBtn.disabled) return;
+
+        clearFormError();
+        submitBtn.disabled = true;
+
+        function sendForm(token){
+          var formData = new FormData(form);
+          if (token) formData.append('g-recaptcha-response', token);
+
+          fetch('submit.php', {
+            method: 'POST',
+            body: formData
+          })
+          .then(function(response){ return response.json(); })
+          .then(function(data){
+            if (data.success) {
+              form.reset();
+              submitBtn.disabled = false;
+              closeDrawer();
+              showSuccessToast();
+            } else {
+              showFormError(data.message || 'Something went wrong sending your message. Please try again.');
+              submitBtn.disabled = false;
+            }
+          })
+          .catch(function(error){
+            console.error('Error:', error);
+            showFormError('Something went wrong sending your message. Please try again.');
+            submitBtn.disabled = false;
+          });
+        }
+
+        if (recaptchaReady && window.grecaptcha) {
+          grecaptcha.ready(function(){
+            grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'})
+              .then(sendForm)
+              .catch(function(error){
+                console.error('reCAPTCHA error:', error);
+                // Fall back to submitting without a token rather than
+                // blocking the user entirely.
+                sendForm(null);
+              });
+          });
+        } else {
+          // reCAPTCHA never loaded — submit anyway so a blocked
+          // script doesn't cost a real lead.
+          sendForm(null);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
