@@ -391,6 +391,34 @@
   @media (max-width: 420px){
     .drawer__inner{ padding: 0.4rem 1.4rem 2rem; }
   }
+
+  .drawer__footer{
+    margin: 1.7rem auto 0;
+    max-width: 24rem;
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--slate);
+    opacity: 0.6;
+    text-align: center;
+  }
+  .drawer__footer-credit{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+  }
+  .drawer__footer-credit:hover{ color: var(--clay); }
+  .drawer__footer-logo{
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -431,7 +459,7 @@
         <label class="field">
           <span class="field__label">Password</span>
           <span class="field__input-wrap">
-            <input class="field__input" id="passwordInput" type="password" name="password" autocomplete="current-password" required>
+            <input class="field__input" id="passwordInput" type="password" name="password" autocomplete="current-password" placeholder="********" required>
             <button class="field__toggle" id="passwordToggle" type="button" aria-pressed="false" aria-label="Show password" aria-controls="passwordInput">
               <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"></path><circle cx="12" cy="12" r="3"></circle><line x1="2" y1="22" x2="22" y2="2"></line></svg>
@@ -449,6 +477,14 @@
           <span class="submit-btn__label">Log in</span>
         </button>
       </form>
+
+      <p class="drawer__footer">
+        © 2026 Lorsen Ventures. All rights reserved. Website created by
+        <a class="drawer__footer-credit" href="https://zulkaif.com" target="_blank" rel="noopener">
+          <img src="src/zulkaif.png" alt="Zulkaif" class="drawer__footer-logo">
+          <span>zulkaif.com</span>
+        </a>
+      </p>
     </div>
   </section>
 
@@ -468,6 +504,16 @@
           img.style.display = 'none';
         });
       }
+    })();
+
+    // If the footer credit logo can't be found, drop the image rather
+    // than showing a broken-image icon next to the link text.
+    (function(){
+      var footerLogo = document.querySelector('.drawer__footer-logo');
+      if (!footerLogo) return;
+      footerLogo.addEventListener('error', function(){
+        footerLogo.style.display = 'none';
+      });
     })();
 
     // Slide-up login drawer: tap the tab, drag it up, or drag the
