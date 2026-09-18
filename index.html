@@ -403,16 +403,12 @@
     text-align: center;
   }
   .drawer__footer-credit{
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
     color: inherit;
     text-decoration: none;
     border-bottom: 1px solid currentColor;
     padding-bottom: 1px;
   }
   .drawer__footer-credit:hover{ color: var(--clay); }
-  
 </style>
 </head>
 <body>
@@ -474,13 +470,28 @@
 
       <p class="drawer__footer">
         © 2026 Lorsen Ventures. All rights reserved. Website created by
-        <a class="drawer__footer-credit" href="https://zulkaif.com" target="_blank" rel="noopener">          
-        </a>
+        <a class="drawer__footer-credit" href="https://zulkaif.com" target="_blank" rel="noopener">zulkaif.com</a>
       </p>
     </div>
   </section>
 
- 
+  <script>
+    // Keep the logo invisible until it has actually finished loading,
+    // so there's no flash of a broken image or empty box.
+    (function(){
+      var img = document.querySelector('.logo');
+      function reveal(){ img.classList.add('is-loaded'); }
+      if (img.complete && img.naturalWidth > 0) {
+        reveal();
+      } else {
+        img.addEventListener('load', reveal);
+        img.addEventListener('error', function(){
+          // If the image fails to load, don't leave a permanently
+          // invisible placeholder taking up space.
+          img.style.display = 'none';
+        });
+      }
+    })();
 
     // Slide-up login drawer: tap the tab, drag it up, or drag the
     // handle back down to dismiss.
